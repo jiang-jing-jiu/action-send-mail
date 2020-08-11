@@ -2,24 +2,22 @@ const nodemailer = require("nodemailer")
 const core = require("@actions/core")
 const fs = require("fs")
 
-function get_body(body) {
-    if (body.startsWith("file://")) {
-        const filepath = body.replace("file://", "")
+function load(value) {
+    if (value.startsWith("file://")) {
+        const filepath = value.replace("file://", "")
         if(fs.existsSync(filepath)) {
-            return fs.readFileSync(filepath, "utf8")
+            value = fs.readFileSync(filepath, "utf8")
         } else {
-            return ""
+            value = ""
         }
     }
-
-    return body
+    return value
 }
 
 function get_from(from, username) {
     if (from.match(/.+<.+@.+>/)) {
         return from
     }
-
     return `"${from}" <${username}>`
 }
 
@@ -37,7 +35,7 @@ async function main() {
         const attachments = core.getInput("attachments", { required: false })
 
         // if the email content is empty, don't send it
-        content = get_body(body)
+        content = load(body)
         if (content == "") {
             return
         }
@@ -54,7 +52,7 @@ async function main() {
 
         const info = await transport.sendMail({
             from: get_from(from, username),
-            to: to,
+            to: load(to),
             subject: subject,
             text: content_type != "text/html" ? content : undefined,
             html: content_type == "text/html" ? content : undefined,
