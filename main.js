@@ -36,9 +36,9 @@ async function main() {
 
         // if the email content is empty, don't send it
         content = load(body)
-        if (content == "") {
-            return
-        }
+//         if (content == "") {
+//             return
+//         }
 
         const transport = nodemailer.createTransport({
             host: server_address,
