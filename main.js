@@ -37,7 +37,7 @@ async function main() {
         // if the email content is empty, don't send it
         content = load(body)
         if (content == "") {
-            #return
+            //return
             continue
         }
 
